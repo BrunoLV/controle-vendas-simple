@@ -6,9 +6,20 @@ function listar() {
 			var table = $("#produtosTable tbody");
 			$(".linhaInformacao").remove();
 			$.each(resultado, function(index, produto) {
-				console.log("index: " + index + ", id: " + produto.id + ", nome: " + produto.nome);
-				var botaoDeletar = "<td><button type='button' class='btn btn-danger' onclick='deletar(" + produto.id + ")'>"+"<span class='glyphicon glyphicon-remove' aria-hidden='true'></span></button></td>";
-				var botaoEditar = "<td><button type='button' class='btn btn-primary' onclick='editar(" + produto.id + ")'>"+"<span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></button></td>";
+				var botaoDeletar = "<td>" +
+						"<button type='button' class='btn btn-danger' onclick='deletar(" + 
+						produto.id + 
+						")'>"+
+						"<span class='glyphicon glyphicon-remove' aria-hidden='true'></span>" +
+						"</button>" +
+						"</td>";
+				var botaoEditar = "<td>" +
+						"<button type='button' class='btn btn-primary' onclick='editar(" + 
+						produto.id + 
+						")'>"+
+						"<span class='glyphicon glyphicon-pencil' aria-hidden='true'></span>" +
+						"</button>" +
+						"</td>";
 				var html = "<tr class='linhaInformacao'>" + 
 					botaoEditar + 
 					botaoDeletar+
@@ -32,8 +43,8 @@ function monstarTipos() {
 			var selectTipo = $("#selectTipoProduto");
 			$(".linhaTipo").remove();
 			$.each(resultado, function(index, tipo) {
-				var option = $("<option></option>", {value: tipo.id, text: tipo.nome});
-				selectTipo.append(option);
+				var option = $("<option></option>");
+				selectTipo.append(option.attr("value", tipo.idTipo).text(tipo.nome));
 			});
 		}
 	});
@@ -48,7 +59,7 @@ function monstarMarcas() {
 			$(".linhaMarca").remove();
 			$.each(resultado, function(index, marca) {
 				var option = $("<option></option>");
-				selectMarca.append(option.attr("value", marca.id).text(marca.nome));
+				selectMarca.append(option.attr("value", marca.idMarca).text(marca.nome));
 			});
 		}
 	});
@@ -91,19 +102,11 @@ function editar(idEdit) {
 			$("#produtoNome").val(resultado.nome);
 			$("#valorProduto").val(resultado.valor);
 			$("#quantidadeMinimaProduto").val(resultado.quantidadeMinima);
-			$("#selectTipoProduto option").each(function(){
-				if (resultado.tipo.nome != $(this).val()) {
-					$(this).attr("selected", false);
-				} else {
-					$(this).attr("selected", true);
-				}
+			$("#selectTipoProduto").find("option").each(function(){
+				$(this).attr("selected", resultado.tipo.idTipo == $(this).val());
 			});
-			$("#selectMarcaProduto option").each(function(){
-				if (resultado.marca.nome != $(this).val()) {
-					$(this).attr("selected", false);
-				} else {
-					$(this).attr("selected", true);
-				}
+			$("#selectMarcaProduto").find("option").each(function(){
+				$(this).attr("selected", resultado.marca.idMarca == $(this).val());
 			});
 		}
 	});
@@ -151,18 +154,17 @@ $("#botaoGravar").on("click", function(event) {
 				nome : $("#produtoNome").val(), 
 				valor : $("#valorProduto").val(), 
 				quantidadeMinima : $("#quantidadeMinimaProduto").val(),
-				idTipoProduto : $("#selectTipoProduto option:selected").val(),
-				idMarca : $("#selectMarcaProduto option:selected").val()
+				idTipoProduto : $("#selectTipoProduto").val(),
+				idMarca : $("#selectMarcaProduto").val()
 				};
 	} else {
 		produto = { 
 				nome : $("#produtoNome").val(), 
 				valor : $("#valorProduto").val(), 
 				quantidadeMinima : $("#quantidadeMinimaProduto").val(),
-				idTipoProduto : $("#selectTipoProduto option:selected").val(),
-				idMarca : $("#selectMarcaProduto option:selected").val()
+				idTipoProduto : $("#selectTipoProduto").val(),
+				idMarca : $("#selectMarcaProduto").val()
 				};
 	}
-	console.log(produto);
 	enviarPost(produto);
 });

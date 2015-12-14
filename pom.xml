@@ -7,7 +7,7 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<jdk.version>1.8</jdk.version>
+		<jdk.version>1.7</jdk.version>
 		<querydsl.version>4.0.6</querydsl.version>
 
 		<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>

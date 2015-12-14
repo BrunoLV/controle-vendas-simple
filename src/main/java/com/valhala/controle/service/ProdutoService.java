@@ -30,6 +30,7 @@ public class ProdutoService {
 			try {
 				connection.rollback();
 			} catch (SQLException e1) {
+				System.out.println("ROLLBACK");
 				throw new RuntimeException(e);
 			}
 		}

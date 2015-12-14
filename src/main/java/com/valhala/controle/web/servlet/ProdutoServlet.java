@@ -70,14 +70,15 @@ public class ProdutoServlet extends HttpServlet {
 		if (request.getParameter("id") != null && !request.getParameter("id").isEmpty()) {
 			produto.setId(Long.valueOf(request.getParameter("id")));
 		}
-		produto.setNome(request.getParameter("produtoNome"));
-		produto.setValor(new BigDecimal(request.getParameter(("produtoValor"))));
+		produto.setNome(request.getParameter("nome"));
+		produto.setValor(new BigDecimal(request.getParameter(("valor"))));
 		produto.setQuantidadeMinima(Integer.valueOf(request.getParameter("quantidadeMinima")));
 		produto.setMarca(new Marca(Long.valueOf(request.getParameter("idMarca"))));
 		produto.setTipo(new Tipo(Long.valueOf(request.getParameter("idTipoProduto"))));
 		if (produto.getId() != null) {
 			service.update(produto);
 		} else {
+			System.out.println("SAVE");
 			service.save(produto);
 		}
 		response.setStatus(200);

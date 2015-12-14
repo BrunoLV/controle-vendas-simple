@@ -41,15 +41,20 @@ public class ProdutoDao {
 
 	public Long save(Produto produto) {
 		return new SQLInsertClause(connection, template, qProduto)
-				.columns(qProduto.nome, qProduto.valor, qProduto.idMarca)
-				.values(produto.getNome(), produto.getValor(), produto.getMarca().getId()).executeWithKey(Long.class);
+				.columns(qProduto.nome, qProduto.valor, qProduto.quantidadeMinima, qProduto.idTipo, qProduto.idMarca)
+				.values(produto.getNome(), produto.getValor(), produto.getQuantidadeMinima(), produto.getTipo().getId(),
+						produto.getMarca().getId())
+				.executeWithKey(Long.class);
 	}
 
 	public Long update(Produto produto) {
 		return new SQLUpdateClause(connection, template, qProduto)
-				.set(Arrays.asList(qProduto.nome, qProduto.valor, qProduto.idMarca),
-						Arrays.asList(produto.getNome(), produto.getValor(), produto.getMarca().getId()))
-				.execute();
+				.set(Arrays.asList(qProduto.nome, qProduto.valor, qProduto.quantidadeMinima, qProduto.idTipo,
+						qProduto.idMarca),
+				Arrays.asList(produto.getNome(), produto.getValor(), produto.getQuantidadeMinima(),
+						produto.getTipo().getId(), produto.getMarca().getId()))
+				.where(qProduto.id.eq(produto.getId())).execute();
+
 	}
 
 	public Long delete(Long id) {
@@ -58,9 +63,9 @@ public class ProdutoDao {
 
 	public Produto findById(Long id) {
 		Tuple tuple = new SQLQuery<>(connection, template)
-				.select(qProduto.id, qProduto.nome, qProduto.valor, qMarca.nome, qTipo.nome, qProduto.quantidadeMinima).from(qProduto)
-				.innerJoin(qMarca).on(qProduto.idMarca.eq(qMarca.id)).innerJoin(qTipo).on(qProduto.idTipo.eq(qTipo.id))
-				.where(qProduto.id.eq(id)).fetchFirst();
+				.select(qProduto.id, qProduto.nome, qProduto.valor, qMarca.nome, qTipo.nome, qProduto.quantidadeMinima)
+				.from(qProduto).innerJoin(qMarca).on(qProduto.idMarca.eq(qMarca.id)).innerJoin(qTipo)
+				.on(qProduto.idTipo.eq(qTipo.id)).where(qProduto.id.eq(id)).fetchFirst();
 		Marca marca = new Marca(tuple.get(qProduto.idMarca), tuple.get(qMarca.nome));
 		Tipo tipo = new Tipo(tuple.get(qProduto.idTipo), tuple.get(qTipo.nome));
 		Produto produto = new Produto(tuple.get(qProduto.id), tuple.get(qProduto.nome), tuple.get(qProduto.valor),
@@ -71,9 +76,9 @@ public class ProdutoDao {
 	public List<Produto> findAll() {
 		List<Produto> produtos = new ArrayList<>();
 		List<Tuple> resultados = new SQLQuery<>(connection, template)
-				.select(qProduto.id, qProduto.nome, qProduto.valor, qMarca.nome, qTipo.nome, qProduto.quantidadeMinima).from(qProduto)
-				.innerJoin(qMarca).on(qProduto.idMarca.eq(qMarca.id)).innerJoin(qTipo).on(qProduto.idTipo.eq(qTipo.id))
-				.where(qMarca.id.eq(qProduto.idMarca)).fetch();
+				.select(qProduto.id, qProduto.nome, qProduto.valor, qMarca.nome, qTipo.nome, qProduto.quantidadeMinima)
+				.from(qProduto).innerJoin(qMarca).on(qProduto.idMarca.eq(qMarca.id)).innerJoin(qTipo)
+				.on(qProduto.idTipo.eq(qTipo.id)).where(qMarca.id.eq(qProduto.idMarca)).fetch();
 		for (Iterator<Tuple> iterator = resultados.iterator(); iterator.hasNext();) {
 			Tuple tuple = iterator.next();
 			Marca marca = new Marca(tuple.get(qProduto.idMarca), tuple.get(qMarca.nome));
